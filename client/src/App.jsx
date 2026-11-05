@@ -1,12 +1,28 @@
 import { useState, useEffect } from 'react';
 
+const THEMES = [
+  { id: 'violet', label: '🌌 Midnight Violet' },
+  { id: 'emerald', label: '🌲 Emerald Mint' },
+  { id: 'sunset', label: '🌅 Sunset Amber' },
+  { id: 'light', label: '☀️ Crisp Light' },
+];
+
 function App() {
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('app-theme') || 'violet';
+  });
   const [serverStatus, setServerStatus] = useState('checking...');
   const [serverMessage, setServerMessage] = useState(null);
   const [count, setCount] = useState(0);
   const [inputText, setInputText] = useState('');
   const [echoResult, setEchoResult] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  // Apply theme to html root element
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('app-theme', theme);
+  }, [theme]);
 
   // Check connection to backend
   const checkBackend = async () => {
@@ -48,9 +64,25 @@ function App() {
 
   return (
     <div className="container">
+      {/* Theme Switcher */}
+      <div className="theme-selector-bar">
+        <span className="theme-label">Active Theme</span>
+        <div className="theme-options">
+          {THEMES.map((t) => (
+            <button
+              key={t.id}
+              className={`theme-pill ${theme === t.id ? 'active' : ''}`}
+              onClick={() => setTheme(t.id)}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <header className="header">
         <h1>React + Express Web App</h1>
-        <p className="subtitle">Simple boilerplate for testing & Docker verification</p>
+        <p className="subtitle">Boilerplate for rapid testing & container deployment</p>
       </header>
 
       {/* Backend Status Section */}
